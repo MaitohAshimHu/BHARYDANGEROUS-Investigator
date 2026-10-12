@@ -1,0 +1,85 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Environment variables & secrets
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.cert
+*.crt
+
+# Forensic databases & evidence vaults
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+exports/
+evidence/
+cases/
+
+# Forensic raw images and capture artifacts
+*.raw
+*.dd
+*.img
+*.dmp
+*.pcap
+*.pcapng
+*.evtx
+
+# Testing & quality
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# User configuration files
+.bharydangerous/
+config.json
+
+# IDEs and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
