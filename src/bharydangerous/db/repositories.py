@@ -49,7 +49,7 @@ class CaseRepository(BaseRepository):
         conn = self._get_conn()
         try:
             cur = conn.cursor()
-            cur.execute("SELECT * FROM cases WHERE case_id = ?;", (case_id,))
+            cur.execute("SELECT * FROM cases WHERE case_id = ? OR name = ?;", (case_id, case_id))
             row = cur.fetchone()
             if not row:
                 return None

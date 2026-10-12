@@ -15,6 +15,13 @@ class MarkdownReporter(BaseReporter):
         md.append(f"**Generated:** {report_data.generated_at} | **Tool Version:** {report_data.version}\n")
         md.append("---\n")
 
+        if report_data.incomplete_analysis_warnings:
+            md.append("> [!WARNING]")
+            md.append("> **Incomplete Analysis & Environment Warnings:**")
+            for w in report_data.incomplete_analysis_warnings:
+                md.append(f"> - {w}")
+            md.append("\n")
+
         # 1. Case Information
         c = report_data.case
         md.append("## 1. Case Metadata")

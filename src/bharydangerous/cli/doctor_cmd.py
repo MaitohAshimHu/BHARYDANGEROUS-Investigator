@@ -9,7 +9,7 @@ console = Console()
 
 def run_doctor():
     """Inspect environment, Python runtime, standard libraries, and external forensic utilities."""
-    console.print("[bold cyan]BHARYDANGEROUS-Investigator — System Diagnostics & Doctor[/bold cyan]\n")
+    console.print("[bold cyan]BHARYDANGEROUS-Investigator - System Diagnostics & Doctor[/bold cyan]\n")
     results = run_all_doctor_checks()
 
     table = Table(title="Forensic Tooling & Environment Health", show_header=True, header_style="bold cyan")

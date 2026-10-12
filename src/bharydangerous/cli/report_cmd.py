@@ -57,6 +57,14 @@ def generate_report(
 
     tool_diagnostics = run_all_doctor_checks()
 
+    warnings = []
+    for ev in evidence_list:
+        if ev.verification_status != "VERIFIED":
+            warnings.append(f"Evidence integrity anomaly: Artifact '{ev.label}' ({ev.evidence_id}) status is '{ev.verification_status}'.")
+    for diag in tool_diagnostics:
+        if diag.status in ("MISSING", "WARNING", "OPTIONAL"):
+            warnings.append(f"Forensic tool limitation: {diag.name} ({diag.category}) is {diag.status}. Using pure-Python fallback analyzer.")
+
     report_data = ReportModel(
         product_name=PRODUCT_NAME,
         version=VERSION,
@@ -67,6 +75,7 @@ def generate_report(
         correlations=correlations,
         ai_annotations=annotations,
         tool_diagnostics=tool_diagnostics,
+        incomplete_analysis_warnings=warnings,
     )
 
     out_path = output_dir.resolve()

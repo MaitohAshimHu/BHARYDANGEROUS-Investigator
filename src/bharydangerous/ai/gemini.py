@@ -10,6 +10,7 @@ from bharydangerous.ai.prompt_templates import (
     build_investigation_summary_prompt,
     build_next_steps_prompt,
 )
+from bharydangerous.ai.redactor import redact_sensitive_data
 from bharydangerous.core.config import get_gemini_api_key, get_gemini_model
 from bharydangerous.core.exceptions import AIProviderError
 from bharydangerous.core.models import FindingRecord, TimelineEventRecord
@@ -24,7 +25,7 @@ class GeminiProvider(BaseAIProvider):
 
         if not self.api_key:
             raise AIProviderError(
-                "Gemini API key not found. Set GEMINI_API_KEY environment variable or run 'bdinvestigator config set-api-key'."
+                "Gemini API key not found. Set GEMINI_API_KEY environment variable or run 'bdinvestigator config set-api-key <KEY>'."
             )
 
         try:
@@ -35,7 +36,7 @@ class GeminiProvider(BaseAIProvider):
                 "The 'google-genai' SDK is not installed. Run 'pip install google-genai' to enable Gemini reasoning."
             )
         except Exception as exc:
-            raise AIProviderError(f"Failed to initialize Gemini Client: {exc}")
+            raise AIProviderError(f"Failed to initialize Gemini Client: {redact_sensitive_data(str(exc))}")
 
     def explain_finding(self, finding: FindingRecord, context_events: List[TimelineEventRecord]) -> AIProviderResponse:
         prompt = build_finding_explanation_prompt(finding, context_events)
@@ -91,6 +92,6 @@ class GeminiProvider(BaseAIProvider):
                     time.sleep(2 ** attempt + 1)
                     continue
                 else:
-                    raise AIProviderError(f"Gemini API generation error: {exc}")
+                    raise AIProviderError(f"Gemini API generation error: {redact_sensitive_data(str(exc))}")
 
-        raise AIProviderError(f"Gemini API request failed after {max_retries} attempts: {last_error}")
+        raise AIProviderError(f"Gemini API request failed after {max_retries} attempts: {redact_sensitive_data(str(last_error))}")

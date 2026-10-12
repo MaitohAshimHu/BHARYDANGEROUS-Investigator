@@ -152,6 +152,17 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       </div>
     </header>
 
+    {% if report.incomplete_analysis_warnings %}
+    <div class="alert-box" style="border-left-color: #ef4444; background: rgba(239, 68, 68, 0.1);">
+      <strong style="color: #ef4444;">⚠ Incomplete Analysis & Environment Warnings:</strong>
+      <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+        {% for w in report.incomplete_analysis_warnings %}
+        <li>{{ w }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
     <h2>1. Evidence Inventory & Verification</h2>
     <table>
       <thead>
@@ -288,11 +299,12 @@ class HtmlReporter(BaseReporter):
 
         try:
             from jinja2 import Template
-            template = Template(HTML_TEMPLATE)
+            template = Template(HTML_TEMPLATE, autoescape=True)
             html_content = template.render(report=report_data)
         except Exception:
+            import html as html_lib
             # Fallback basic HTML without jinja2
-            html_content = f"<html><body><h1>{report_data.product_name} Report</h1><p>Case: {report_data.case.name}</p></body></html>"
+            html_content = f"<html><body><h1>{html_lib.escape(report_data.product_name)} Report</h1><p>Case: {html_lib.escape(report_data.case.name)}</p></body></html>"
 
         with out.open("w", encoding="utf-8") as f:
             f.write(html_content)

@@ -71,13 +71,19 @@ bdinvestigator evidence verify
 # File triage & string extraction
 bdinvestigator analyze triage /path/to/suspicious_sample.bin --strings
 
-# Windows and Linux logs
+# Windows and Linux logs (EVTX, Syslog, Web logs)
 bdinvestigator analyze logs /path/to/security.evtx
 
-# Network PCAP dissection
+# Partition inspection (The Sleuth Kit or pure-Python MBR parser)
+bdinvestigator analyze disk /path/to/disk_image.raw
+
+# Memory forensics (Volatility 3 or native heuristic memory scanning)
+bdinvestigator analyze memory /path/to/memory_dump.raw
+
+# Network PCAP dissection & credential sniffing
 bdinvestigator analyze pcap /path/to/evidence.pcap
 
-# YARA signature scan
+# YARA signature pattern scanning
 bdinvestigator analyze yara /path/to/target_directory/
 ```
 
@@ -88,9 +94,18 @@ bdinvestigator timeline query --limit 20
 ```
 
 ### 5. AI-Assisted Reasoning (Optional & Consent-Gated)
-Configure your Gemini API key (optional):
+Configure your Gemini API key (optional, stored with restricted permissions):
 ```bash
+# Via CLI config command:
+bdinvestigator config set-api-key "your-api-key"
+
+# Or via environment variable:
 export GEMINI_API_KEY="your-api-key"
+```
+
+Inspect active configuration & environment:
+```bash
+bdinvestigator config show
 ```
 
 Explain a specific finding or summarize the entire case:

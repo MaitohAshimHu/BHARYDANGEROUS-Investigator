@@ -4,7 +4,7 @@ import sys
 
 def main():
     print("=" * 70)
-    print("BHARYDANGEROUS-Investigator — Environment Diagnostics")
+    print("BHARYDANGEROUS-Investigator - Environment Diagnostics")
     print("=" * 70)
 
     # 1. Python version

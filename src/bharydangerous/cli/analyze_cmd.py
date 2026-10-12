@@ -18,7 +18,8 @@ from bharydangerous.analyzers.strings_extractor import extract_strings
 from bharydangerous.analyzers.syslog_parser import SyslogParser
 from bharydangerous.analyzers.weblog_parser import WebLogParser
 from bharydangerous.core.constants import DEFAULT_DB_FILENAME
-from bharydangerous.core.models import FindingRecord
+from bharydangerous.core.hashing import compute_hashes
+from bharydangerous.core.models import EvidenceRecord, FindingRecord
 from bharydangerous.db.repositories import CaseRepository, EvidenceRepository, FindingRepository, TimelineRepository
 
 app = typer.Typer(help="Execute specialized forensic analysis modules.")
@@ -37,6 +38,37 @@ def _get_context(workspace: Path, specified_case: Optional[str]):
         raise typer.Exit(code=1)
     return db_path, c.case_id
 
+def _resolve_evidence_id(db_path: Path, case_id: str, target: Path, default_type: str = "FILE") -> str:
+    ev_repo = EvidenceRepository(db_path)
+    ev_list = ev_repo.list_by_case(case_id)
+    target_str = str(target.resolve())
+    for ev in ev_list:
+        if ev.source_path == target_str or (ev.stored_path and ev.stored_path == target_str):
+            return ev.evidence_id
+    for ev in ev_list:
+        if Path(ev.source_path).name == target.name:
+            return ev.evidence_id
+    if ev_list:
+        return ev_list[0].evidence_id
+
+    # Auto-register ad-hoc evidence to maintain foreign-key integrity & provenance
+    sha256, md5 = compute_hashes(target)
+    stat = target.stat()
+    new_ev_id = f"EV-{uuid.uuid4().hex[:8].upper()}"
+    new_record = EvidenceRecord(
+        evidence_id=new_ev_id,
+        case_id=case_id,
+        label=target.name,
+        evidence_type=default_type,
+        source_path=str(target.resolve()),
+        file_size_bytes=stat.st_size,
+        sha256=sha256,
+        md5=md5,
+        verification_status="VERIFIED",
+    )
+    ev_repo.add(new_record)
+    return new_ev_id
+
 @app.command("triage")
 def analyze_triage(
     path: Path = typer.Argument(..., help="Path to file or archive to triage."),
@@ -51,12 +83,8 @@ def analyze_triage(
         raise typer.Exit(code=1)
 
     db_path, cid = _get_context(workspace, case_id)
-    ev_repo = EvidenceRepository(db_path)
     finding_repo = FindingRepository(db_path)
-
-    # Find or auto-associate evidence
-    ev_list = ev_repo.list_by_case(cid)
-    ev_id = ev_list[0].evidence_id if ev_list else "EV-UNTRACKED"
+    ev_id = _resolve_evidence_id(db_path, cid, target, default_type="FILE")
 
     console.print(f"[bold cyan]Triaging File: {target.name}[/bold cyan]")
     triage_res = triage_file(target)
@@ -130,9 +158,7 @@ def analyze_logs(
         raise typer.Exit(code=1)
 
     db_path, cid = _get_context(workspace, case_id)
-    ev_repo = EvidenceRepository(db_path)
-    ev_list = ev_repo.list_by_case(cid)
-    ev_id = ev_list[0].evidence_id if ev_list else "EV-UNTRACKED"
+    ev_id = _resolve_evidence_id(db_path, cid, target, default_type="LOG_FILE")
 
     timeline_repo = TimelineRepository(db_path)
     events = []
@@ -173,10 +199,8 @@ def analyze_disk(
         raise typer.Exit(code=1)
 
     db_path, cid = _get_context(workspace, case_id)
-    ev_repo = EvidenceRepository(db_path)
     finding_repo = FindingRepository(db_path)
-    ev_list = ev_repo.list_by_case(cid)
-    ev_id = ev_list[0].evidence_id if ev_list else "EV-UNTRACKED"
+    ev_id = _resolve_evidence_id(db_path, cid, target, default_type="DISK_IMAGE")
 
     inspector = DiskInspector()
     res = inspector.inspect_disk(target, ev_id)
@@ -215,10 +239,8 @@ def analyze_memory(
         raise typer.Exit(code=1)
 
     db_path, cid = _get_context(workspace, case_id)
-    ev_repo = EvidenceRepository(db_path)
     finding_repo = FindingRepository(db_path)
-    ev_list = ev_repo.list_by_case(cid)
-    ev_id = ev_list[0].evidence_id if ev_list else "EV-UNTRACKED"
+    ev_id = _resolve_evidence_id(db_path, cid, target, default_type="MEMORY_DUMP")
 
     inspector = MemoryInspector()
     res = inspector.inspect_memory(target, ev_id)
@@ -247,11 +269,9 @@ def analyze_pcap(
         raise typer.Exit(code=1)
 
     db_path, cid = _get_context(workspace, case_id)
-    ev_repo = EvidenceRepository(db_path)
     finding_repo = FindingRepository(db_path)
     timeline_repo = TimelineRepository(db_path)
-    ev_list = ev_repo.list_by_case(cid)
-    ev_id = ev_list[0].evidence_id if ev_list else "EV-UNTRACKED"
+    ev_id = _resolve_evidence_id(db_path, cid, target, default_type="PCAP")
 
     analyzer = PcapAnalyzer()
     res = analyzer.analyze_pcap(target, cid, ev_id)
@@ -304,10 +324,9 @@ def analyze_yara(
         raise typer.Exit(code=1)
 
     db_path, cid = _get_context(workspace, case_id)
-    ev_repo = EvidenceRepository(db_path)
     finding_repo = FindingRepository(db_path)
-    ev_list = ev_repo.list_by_case(cid)
-    ev_id = ev_list[0].evidence_id if ev_list else "EV-UNTRACKED"
+    first_file = target if target.is_file() else next((p for p in target.rglob("*") if p.is_file()), target)
+    ev_id = _resolve_evidence_id(db_path, cid, first_file if first_file.is_file() else target, default_type="FILE")
 
     adapter = YaraAdapter()
     files_to_scan = [target] if target.is_file() else [p for p in target.rglob("*") if p.is_file()][:100]

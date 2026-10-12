@@ -138,3 +138,27 @@ def synthetic_yara_sample(tmp_path: Path) -> Path:
     p = tmp_path / "suspicious_test.txt"
     p.write_text("// Test payload: BHARYDANGEROUS_FORENSIC_TEST_SIGNATURE\n", encoding="utf-8")
     return p
+
+@pytest.fixture
+def synthetic_memory_dump(tmp_path: Path) -> Path:
+    """Generate synthetic raw memory dump with embedded MZ/PE executable, IP, and URL."""
+    p = tmp_path / "memory_sample.raw"
+    data = bytearray(8192)
+    # Write embedded MZ header with e_lfanew pointing to PE header
+    mz_offset = 256
+    data[mz_offset : mz_offset + 2] = b"MZ"
+    # e_lfanew offset is at mz_offset + 60
+    pe_offset = 64
+    struct.pack_into("<I", data, mz_offset + 60, pe_offset)
+    # PE signature at mz_offset + pe_offset
+    data[mz_offset + pe_offset : mz_offset + pe_offset + 4] = b"PE\x00\x00"
+
+    # Write IP and URL strings
+    ip_payload = b" Connection from 198.51.100.77 on ephemeral port "
+    data[1024 : 1024 + len(ip_payload)] = ip_payload
+    url_payload = b" Callback to https://c2.forensic-testing.org/beacon completed "
+    data[2048 : 2048 + len(url_payload)] = url_payload
+
+    p.write_bytes(bytes(data))
+    return p
+

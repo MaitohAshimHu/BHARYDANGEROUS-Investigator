@@ -59,3 +59,13 @@ def set_file_readonly(file_path: Path | str) -> bool:
     except Exception:
         return False
 
+def is_file_readonly(file_path: Path | str) -> bool:
+    """Check if file has read-only permissions."""
+    import os
+    import stat
+    path = Path(file_path)
+    if not path.is_file():
+        return False
+    mode = os.stat(path).st_mode
+    return not bool(mode & stat.S_IWUSR)
+
