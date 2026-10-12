@@ -1,0 +1,3 @@
+[console_scripts]
+bdinvestigator = bharydangerous.cli.app:main
+bharydangerous = bharydangerous.cli.app:main

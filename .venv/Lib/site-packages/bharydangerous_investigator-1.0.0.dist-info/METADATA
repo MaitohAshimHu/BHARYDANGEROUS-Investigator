@@ -1,0 +1,31 @@
+Metadata-Version: 2.4
+Name: bharydangerous-investigator
+Version: 1.0.0
+Summary: A modular, production-grade, AI-assisted digital forensics and incident response CLI tool.
+Author-email: Ashim <ashim@bharydangerous.org>
+License: MIT
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Security
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: typer>=0.12.0
+Requires-Dist: rich>=13.7.0
+Requires-Dist: pydantic>=2.7.0
+Requires-Dist: jinja2>=3.1.0
+Requires-Dist: defusedxml>=0.7.1
+Provides-Extra: ai
+Requires-Dist: google-genai>=2.0.0; extra == "ai"
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.1.0; extra == "dev"
+Provides-Extra: all
+Requires-Dist: google-genai>=2.0.0; extra == "all"
+Requires-Dist: pytest>=8.0.0; extra == "all"

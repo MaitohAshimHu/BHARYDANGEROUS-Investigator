@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=65.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bharydangerous-investigator"
+version = "1.0.0"
+description = "A modular, production-grade, AI-assisted digital forensics and incident response CLI tool."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Ashim", email = "ashim@bharydangerous.org" }
+]
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+]
+dependencies = [
+    "typer>=0.12.0",
+    "rich>=13.7.0",
+    "pydantic>=2.7.0",
+    "jinja2>=3.1.0",
+    "defusedxml>=0.7.1",
+]
+
+[project.optional-dependencies]
+ai = [
+    "google-genai>=2.0.0",
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+]
+all = [
+    "google-genai>=2.0.0",
+    "pytest>=8.0.0",
+]
+
+[project.scripts]
+bdinvestigator = "bharydangerous.cli.app:main"
+bharydangerous = "bharydangerous.cli.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
