@@ -29,7 +29,7 @@ def _get_context(workspace: Path, specified_case: Optional[str]):
 @app.command("build")
 def build_timeline(
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID."),
 ):
     """Synthesize unified timeline and execute cross-artifact correlation rules."""
     db_path, cid = _get_context(workspace, case_id)
@@ -75,7 +75,7 @@ def query_timeline(
     limit: int = typer.Option(50, "--limit", "-n", help="Maximum events to display."),
     source_type: Optional[str] = typer.Option(None, "--source", "-s", help="Filter by source (EVTX, SYSLOG, PCAP, WEBLOG)."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID."),
 ):
     """Query and inspect chronological timeline events."""
     db_path, cid = _get_context(workspace, case_id)

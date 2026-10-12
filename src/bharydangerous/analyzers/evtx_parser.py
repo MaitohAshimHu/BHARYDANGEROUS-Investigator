@@ -3,6 +3,10 @@ import re
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+try:
+    from defusedxml.ElementTree import fromstring as safe_xml_fromstring
+except ImportError:
+    from xml.etree.ElementTree import fromstring as safe_xml_fromstring
 import xml.etree.ElementTree as ET
 
 from bharydangerous.core.models import TimelineEventRecord
@@ -51,7 +55,7 @@ class EvtxParser:
 
         for block in event_blocks[:5000]:  # Cap at 5000 events
             try:
-                root = ET.fromstring(block)
+                root = safe_xml_fromstring(block)
                 # Namespace strip
                 for elem in root.iter():
                     if "}" in elem.tag:

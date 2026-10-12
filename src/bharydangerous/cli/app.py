@@ -3,9 +3,11 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 
+from typing import Optional
 from bharydangerous.cli.analyze_cmd import app as analyze_app
 from bharydangerous.cli.ai_cmd import app as ai_app
 from bharydangerous.cli.case_cmd import app as case_app
+from bharydangerous.cli.config_cmd import app as config_app
 from bharydangerous.cli.doctor_cmd import run_doctor
 from bharydangerous.cli.evidence_cmd import app as evidence_app
 from bharydangerous.cli.report_cmd import app as report_app
@@ -15,11 +17,25 @@ from bharydangerous.plugins.manager import PluginManager
 
 app = typer.Typer(
     name="bdinvestigator",
-    help=f"{PRODUCT_NAME} — Digital Forensics & Incident Response CLI by {AUTHOR}",
+    help=f"{PRODUCT_NAME} - Digital Forensics & Incident Response CLI by {AUTHOR}",
     add_completion=False,
     no_args_is_help=True,
 )
 console = Console()
+
+def _version_callback(value: bool):
+    if value:
+        console.print(f"[bold cyan]{PRODUCT_NAME}[/bold cyan] v[bold]{VERSION}[/bold] by [bold]{AUTHOR}[/bold]")
+        raise typer.Exit()
+
+@app.callback()
+def main_callback(
+    version: Optional[bool] = typer.Option(
+        None, "--version", "-v", help="Display tool version and exit.", callback=_version_callback, is_eager=True
+    ),
+):
+    """BHARYDANGEROUS-Investigator CLI callback."""
+    pass
 
 # Register Command Groups
 app.add_typer(case_app, name="case")
@@ -28,6 +44,7 @@ app.add_typer(analyze_app, name="analyze")
 app.add_typer(timeline_app, name="timeline")
 app.add_typer(ai_app, name="ai")
 app.add_typer(report_app, name="report")
+app.add_typer(config_app, name="config")
 
 @app.command("doctor")
 def doctor():

@@ -28,7 +28,7 @@ def generate_report(
     output_dir: Path = typer.Option(Path("./exports"), "--output-dir", "-o", help="Target output directory."),
     report_format: str = typer.Option("all", "--format", "-f", help="Format to generate (json, md, html, all)."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID."),
 ):
     """Compile and export complete forensic investigation report."""
     db_path = workspace.resolve() / DEFAULT_DB_FILENAME

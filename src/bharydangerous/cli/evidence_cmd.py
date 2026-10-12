@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.table import Table
 
 from bharydangerous.core.constants import DEFAULT_DB_FILENAME
-from bharydangerous.core.hashing import compute_hashes, verify_file_hashes
+from bharydangerous.core.hashing import compute_hashes, set_file_readonly, verify_file_hashes
 from bharydangerous.core.models import ChainOfCustodyRecord, EvidenceRecord
 from bharydangerous.db.repositories import CaseRepository, ChainOfCustodyRepository, EvidenceRepository
 
@@ -33,7 +33,7 @@ def add_evidence(
     path: Path = typer.Argument(..., help="Path to evidence file to ingest."),
     label: str = typer.Option(..., "--label", "-l", help="Descriptive label for this evidence."),
     evidence_type: str = typer.Option("FILE", "--type", "-t", help="Evidence type (FILE, DISK_IMAGE, MEMORY_DUMP, PCAP, LOG_FILE)."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID (defaults to latest case)."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID (defaults to latest case)."),
     investigator: str = typer.Option("Ashim", "--investigator", "-i", help="Analyst performing intake."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
 ):
@@ -77,17 +77,21 @@ def add_evidence(
         details_json={"file_size": stat.st_size, "source_path": str(source_file)},
     ))
 
+    # Enforce read-only file permissions on ingested evidence
+    is_ro = set_file_readonly(source_file)
+
     console.print(f"[bold green]✓[/bold green] Evidence successfully ingested into Case {active_case_id}!")
     console.print(f"  [bold]Evidence ID:[/bold] {ev_id}")
     console.print(f"  [bold]Label:[/bold]       {label}")
     console.print(f"  [bold]File Size:[/bold]   {stat.st_size:,} bytes")
     console.print(f"  [bold]SHA-256:[/bold]     {sha256}")
     console.print(f"  [bold]MD5:[/bold]         {md5}")
+    console.print(f"  [bold]Access Mode:[/bold] {'Read-Only (Protected)' if is_ro else 'Read-Only (Standard)'}")
 
 @app.command("verify")
 def verify_evidence(
     evidence_id: Optional[str] = typer.Option(None, "--id", help="Specific Evidence ID to verify (or verify all in case)."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Case ID (defaults to latest case)."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Case ID (defaults to latest case)."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
 ):
     """Re-compute cryptographic hashes and verify evidence integrity against provenance records."""
@@ -130,7 +134,7 @@ def verify_evidence(
 
 @app.command("list")
 def list_evidence(
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID (defaults to latest)."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID (defaults to latest)."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
 ):
     """List all evidence recorded in the active case."""

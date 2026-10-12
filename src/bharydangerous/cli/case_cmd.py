@@ -76,7 +76,7 @@ def list_cases(
 
 @app.command("info")
 def case_info(
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Specific Case ID (defaults to latest)."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Specific Case ID (defaults to latest)."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
 ):
     """Display detailed parameters and metadata for a case."""

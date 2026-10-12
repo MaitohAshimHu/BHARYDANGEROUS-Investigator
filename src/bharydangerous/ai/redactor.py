@@ -14,6 +14,10 @@ PATTERNS = [
     (re.compile(r'(?i)\b(password|passwd|pwd|secret)\b\s*[:=]\s*["\']?([^"\'\s&]+)["\']?'), r"\1=[REDACTED_PASSWORD]"),
     # Basic Auth Base64
     (re.compile(r"(?i)Authorization:\s*Basic\s+[A-Za-z0-9+/=]+"), "Authorization: Basic [REDACTED_CREDENTIAL]"),
+    # Bearer Token
+    (re.compile(r"(?i)Authorization:\s*Bearer\s+[A-Za-z0-9\-_.~+/=]+"), "Authorization: Bearer [REDACTED_TOKEN]"),
+    # JWT Token
+    (re.compile(r"\beyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\b"), "[REDACTED_JWT_TOKEN]"),
     # Credit Card
     (re.compile(r"\b(?:\d{4}[ -]?){3}\d{4}\b"), "[REDACTED_CREDIT_CARD]"),
 ]

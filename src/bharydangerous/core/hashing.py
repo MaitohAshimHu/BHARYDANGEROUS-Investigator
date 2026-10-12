@@ -45,3 +45,17 @@ def verify_file_hashes(file_path: Path | str, expected_sha256: str, expected_md5
         results["md5_match"] = actual_md5.lower() == expected_md5.lower()
         results["expected_md5"] = expected_md5
     return results
+
+def set_file_readonly(file_path: Path | str) -> bool:
+    """Set file to read-only permissions to prevent accidental modification."""
+    import os
+    import stat
+    path = Path(file_path)
+    if not path.is_file():
+        return False
+    try:
+        os.chmod(path, stat.S_IREAD | stat.S_IRGRP | stat.S_IROTH)
+        return True
+    except Exception:
+        return False
+

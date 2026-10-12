@@ -30,7 +30,7 @@
 
 ### Linux & macOS
 ```bash
-git clone https://github.com/ashim/BHARYDANGEROUS-Investigator.git
+git clone https://github.com/MaitohAshimHu/BHARYDANGEROUS-Investigator.git
 cd BHARYDANGEROUS-Investigator
 bash scripts/install_linux_macos.sh
 source .venv/bin/activate
@@ -38,7 +38,7 @@ source .venv/bin/activate
 
 ### Windows (PowerShell)
 ```powershell
-git clone https://github.com/ashim/BHARYDANGEROUS-Investigator.git
+git clone https://github.com/MaitohAshimHu/BHARYDANGEROUS-Investigator.git
 cd BHARYDANGEROUS-Investigator
 .\scripts\install_windows.ps1
 .\.venv\Scripts\Activate.ps1

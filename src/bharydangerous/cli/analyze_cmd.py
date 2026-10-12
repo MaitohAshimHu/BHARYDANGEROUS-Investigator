@@ -42,7 +42,7 @@ def analyze_triage(
     path: Path = typer.Argument(..., help="Path to file or archive to triage."),
     extract_strings_flag: bool = typer.Option(False, "--strings", "-s", help="Extract printable strings and regex IOCs."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID."),
 ):
     """File identification, entropy calculation, binary headers, and archive inspection."""
     target = path.resolve()
@@ -121,7 +121,7 @@ def analyze_logs(
     path: Path = typer.Argument(..., help="Path to log file (EVTX, syslog, web access log)."),
     log_format: str = typer.Option("auto", "--format", "-f", help="Log format (auto, evtx, syslog, web)."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID."),
 ):
     """Parse log files into normalized timeline events."""
     target = path.resolve()
@@ -164,7 +164,7 @@ def analyze_logs(
 def analyze_disk(
     path: Path = typer.Argument(..., help="Path to raw disk image (.dd, .raw, .img)."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID."),
 ):
     """Inspect partition tables and filesystems on disk images."""
     target = path.resolve()
@@ -206,7 +206,7 @@ def analyze_disk(
 def analyze_memory(
     path: Path = typer.Argument(..., help="Path to raw memory dump (.raw, .dmp, .bin)."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID."),
 ):
     """Analyze memory dumps using Volatility 3 or native heuristic memory scanning."""
     target = path.resolve()
@@ -238,7 +238,7 @@ def analyze_memory(
 def analyze_pcap(
     path: Path = typer.Argument(..., help="Path to PCAP capture file."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID."),
 ):
     """Dissect PCAP files: IP conversations, DNS lookups, HTTP traffic, and unencrypted credentials."""
     target = path.resolve()
@@ -295,7 +295,7 @@ def analyze_yara(
     path: Path = typer.Argument(..., help="Path to file or directory to scan."),
     rule_file: Optional[Path] = typer.Option(None, "--rules", "-r", help="Custom .yar rule file."),
     workspace: Path = typer.Option(Path("."), "--workspace", "-w", help="Workspace directory."),
-    case_id: Optional[str] = typer.Option(None, "--case", "-c", help="Target Case ID."),
+    case_id: Optional[str] = typer.Option(None, "--case", "--case-id", "-c", help="Target Case ID."),
 ):
     """Scan file or folder against default or custom forensic YARA rules."""
     target = path.resolve()

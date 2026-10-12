@@ -1,3 +1,5 @@
+LICENSE
+README.md
 pyproject.toml
 src/bharydangerous/__init__.py
 src/bharydangerous/__main__.py
@@ -54,3 +56,9 @@ src/bharydangerous_investigator.egg-info/dependency_links.txt
 src/bharydangerous_investigator.egg-info/entry_points.txt
 src/bharydangerous_investigator.egg-info/requires.txt
 src/bharydangerous_investigator.egg-info/top_level.txt
+tests/test_adversarial_ai.py
+tests/test_ai_and_reporting.py
+tests/test_cli_e2e.py
+tests/test_hashing_and_triage.py
+tests/test_parsers.py
+tests/test_timeline_and_correlation.py
