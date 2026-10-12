@@ -120,3 +120,5 @@ class ReportModel(BaseModel):
     correlations: List[CorrelationRecord] = Field(default_factory=list)
     ai_annotations: List[AIAnnotationRecord] = Field(default_factory=list)
     tool_diagnostics: List[DoctorCheckResult] = Field(default_factory=list)
+    incomplete_analysis_warnings: List[str] = Field(default_factory=list)
+
